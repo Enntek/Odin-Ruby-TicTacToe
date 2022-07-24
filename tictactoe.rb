@@ -6,6 +6,16 @@
 # create game without classes, see if the need for classes will arise naturally
 # if you finish the game without using a single class, then seek other solutions.
 
+# 
+
+class Player
+  def initialize(name)
+    @name = name
+  end
+end
+
+puts ""
+
 puts "You are circle, select a tile 1 - 9: "
 player1_action = gets.chomp
 
