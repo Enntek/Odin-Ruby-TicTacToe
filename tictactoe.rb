@@ -4,12 +4,17 @@
 class Player
   attr_reader :name
   attr_accessor :symbol
-  @@game_board = [["e", "e", "e"], ["e", "e", "e"], ["e", "e", "e"]]
+  @@game_over = false
+  @@game_board = [["-", "-", "-"], ["-", "-", "-"], ["-", "-", "-"]]
 
   def initialize(name)
     @name = name
     @symbol = symbol
     @spaces = []
+  end
+
+  def self.game_over
+    @@game_over
   end
 
   def play_turn
@@ -27,7 +32,7 @@ class Player
 
     puts "<< #{@name} plays space # #{space} >>"
     Player.display_grid
-    Player.win_check(self.symbol)
+    Player.win_check(self.name, self.symbol)
   end
 
   def self.display_grid
@@ -36,20 +41,32 @@ class Player
     puts "\t#{@@game_board[2]}"
   end
 
-  def self.win_check(symbol)
+  def self.win_check(name, symbol)
+    win = false
 
     #check rows
     row_win =  @@game_board.any? do |row|
       row.all? { |space| (space == symbol) }
     end
-    
+    win = true if row_win
+
     #check columns
-    @@game_board.map.with_index do |a, b|
-      puts a, b
+    for i in (0..2)
+      column = []
+      for j in (0..2)
+        column.push(@@game_board[j][i])
+      end
+      
+      col_win = column.all? { |space| space == symbol}
+      win = true if col_win
     end
+    
+    self.end_game(name) if win
+  end
 
-    row_win
-
+  def self.end_game(name)
+    puts "<< congrats #{name}!! >>"
+    @@game_over = true
   end
 end
 
@@ -63,8 +80,9 @@ player1.symbol == "X" ? player2.symbol = "O" : player2.symbol = "X"
 puts "Player1's symbol is #{player1.symbol}"
 puts "Player2's symbol is #{player2.symbol}"
 
-i = 0
-while (i += 1) < 5
+
+while true
   player1.play_turn
   player2.play_turn
+  break if Player.game_over == true
 end
