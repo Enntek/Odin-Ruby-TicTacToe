@@ -3,10 +3,27 @@
 
 #refactor all code, use principles of readability, modularity, brevity
 
+# use def initialize inside Game, put run-once stuff in it
+# use Array.new(3) {Array.new(3)}???
+# use arrays of numbers that contain possible wins, seems many did it this way
+# draw actual board in console (different ways to do this. one is literally with multi-lines, or draw with iterators, try both?)
+# when board is full with no winners, call it a tie
+# all board moves represented by 1-9, board is array of numbers
+# remove positions from positions_taken bank, check array if position hasn't been popped
+# use .all? in combination with array of winning combos to check winner
+# def print_board which will use separators and also print positions
+# def play_turn
+# have little to no code in the global scope
+
+
+
 class Game
+  #initialize for run-once stuff
+  # def game for main game loop
 end
 
 class Player
+  #how do we share info between Player and Game?
 end
 
 
