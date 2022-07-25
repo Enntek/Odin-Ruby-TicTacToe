@@ -4,7 +4,6 @@
 #refactor all code, use principles of readability, modularity, brevity
 
 # use def initialize inside Game, put run-once stuff in it
-# use Array.new(3) {Array.new(3)}???
 # use arrays of numbers that contain possible wins, seems many did it this way
 # draw actual board in console (different ways to do this. one is literally with multi-lines, or draw with iterators, try both?)
 # when board is full with no winners, call it a tie
@@ -15,19 +14,32 @@
 # def play_turn
 # have little to no code in the global scope
 
-
 # code what feels natural, glance at your notes once in a while
 
 class Game
+  three_in_a_row = [[0, 1, 2],
+                    [3, 4, 5], 
+                    [6, 7, 8], 
+                    [0, 3, 6], 
+                    [1, 4, 7], 
+                    [2, 5, 8], 
+                    [0, 4, 8], 
+                    [2, 4, 6]]
+
   attr_reader :game_board # del later?
 
   def initialize
     #initialize run-once stuff
 
-    # @game_board = Array.new(3) {Array.new(3)}
+
     @game_board = (0..8).to_a
-    # @game_board = (0..2).to_a
     draw_board
+
+    # initialize players
+
+    player1 = Player.new("Player 1")
+    player2 = Player.new("Player 2")
+    
   end
 
   def draw_board
@@ -41,7 +53,31 @@ class Game
 end
 
 class Player
-  #how do we share info between Player and Game?
+  @@sides = ["X", "O"]
+
+  def initialize(name)
+    @name = name
+    @side = ""
+    choose_side
+  end
+
+  def choose_side
+    if @@sides.length == 2
+      begin
+        puts "Choose X or O:"
+        @side = Kernel.gets.chomp.upcase.match(/(O|X)/)[0]
+      rescue StandardError=>e
+        puts "Invalid input. Choose X or O:"
+        retry
+      end
+      
+      puts "#{@name} is #{@side}"
+      @@sides.reject! { |item| item == @side }
+    else
+      @side = @@sides[0]
+      puts "#{@name} is #{@side}"
+    end  
+  end
 end
 
 game = Game.new
