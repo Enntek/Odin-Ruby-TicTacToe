@@ -16,15 +16,35 @@
 # have little to no code in the global scope
 
 
+# code what feels natural, glance at your notes once in a while
 
 class Game
-  #initialize for run-once stuff
+  attr_reader :game_board # del later?
+
+  def initialize
+    #initialize run-once stuff
+
+    # @game_board = Array.new(3) {Array.new(3)}
+    @game_board = (0..8).to_a
+    # @game_board = (0..2).to_a
+    draw_board
+  end
+
+  def draw_board
+    for i in (0..8).step(3)
+      puts "#{@game_board[i]} | #{@game_board[i+1]} | #{@game_board[i+2]}"
+      puts "--+---+--" if i < 5
+    end
+  end
+
   # def game for main game loop
 end
 
 class Player
   #how do we share info between Player and Game?
 end
+
+game = Game.new
 
 
 
