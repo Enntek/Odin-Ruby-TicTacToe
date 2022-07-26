@@ -3,39 +3,32 @@
 
 #refactor all code, use principles of readability, modularity, brevity
 
-# use def initialize inside Game, put run-once stuff in it
-# use arrays of numbers that contain possible wins, seems many did it this way
 # draw actual board in console (different ways to do this. one is literally with multi-lines, or draw with iterators, try both?)
-# when board is full with no winners, call it a tie
-# all board moves represented by 1-9, board is array of numbers
-# use .all? in combination with array of winning combos to check winner
-# def print_board which will use separators and also print positions
+
+# add:
+# end game when 1 player wins
+# draw, when all spaces are filled
+# play new game
+# blank numbers on game board print
+
 
 class Game
-  three_in_a_row = [[0, 1, 2],
-                    [3, 4, 5], 
-                    [6, 7, 8], 
-                    [0, 3, 6], 
-                    [1, 4, 7], 
-                    [2, 5, 8], 
-                    [0, 4, 8], 
-                    [2, 4, 6]]
-
-  attr_reader :game_board # del later?
-
+  attr_reader :game_board
+  
   def initialize
-    @@game_board = (0..8).to_a
-    # @@game_board = ["X", 1, 2, 3, 4, 5, 6, 7, 8]
+    puts "Welcome to Tic Tac Toe!\n "
+    # @@game_board = (0..8).to_a
+    @@game_board = Array.new(9, " ")
     player1 = Player.new("Player 1")
     player2 = Player.new("Player 2")
     Game.draw_board
     game(player1, player2)
   end
-
+  
   def self.current_board
     @@game_board
   end
-
+  
   def self.draw_board
     puts "\n"
     for i in (0..8).step(3)
@@ -44,43 +37,53 @@ class Game
     end
     puts "\n"
   end
-
+  
   def game(player1, player2) # main loop
     while true
       player1.take_turn(player1.name)
+      # check game over
       player2.take_turn(player2.name)
+      # check game over
     end
   end
-
-  def self.valid_move(move, player_side)
-    @@game_board[move] = player_side
-    p @@game_board
+  
+  def self.valid_move(move, player_symb, player)
+    @@game_board[move] = player_symb
     Game.draw_board
-    Game.win_check
+    Game.win_check(player_symb, player)
   end
-
-  def self.win_check
-    puts "win check logic goes here!"
+  
+  def self.win_check(player_symb, player)
+    win_configs = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], 
+    [2, 5, 8], [0, 4, 8], [2, 4, 6]]
+              
+    win = win_configs.any? do |win_subarr|
+      win_subarr.all? { |space| @@game_board[space] == player_symb }
+    end
+    
+    if !@@game_board.include?(" ") then puts "No spaces left. It's a draw!" end
+      # run end game code, ask to play again
+    if win then puts "\t << #{player} wins!!! >>" end
+      # run end game code, ask to play again
   end
-
 end
-
+            
 class Player
   @@sides = ["X", "O"]
   attr_reader :name, :side
-
+  
   def initialize(name)
     @name = name
     @side = ""
     choose_side
   end
-
+  
   def choose_side
     if @@sides.length == 2
       begin
         puts "Choose X or O:"
-        @side = "X"
-        # @side = Kernel.gets.chomp.upcase.match(/(O|X)/)[0]
+        # @side = "X"
+        @side = Kernel.gets.chomp.upcase.match(/(O|X)/)[0]
       rescue NoMethodError=>e
         puts "Invalid input. Choose X or O:"
         retry
@@ -93,31 +96,31 @@ class Player
       puts "#{@name} is #{@side}"
     end
   end
-
+              
   def take_turn(name)
-    
     while true
       begin
         puts "#{name}, it's your turn! Choose a spot from 1 to 9: "
-        intended_spot = Kernel.gets.chomp.match(/[1-9]/)[0] #regex match later
+        intended_spot = Kernel.gets.chomp.match(/[1-9]/)[0]
       rescue NoMethodError
         puts "Invalid input. Choose a spot from 1 to 9: "
-        retry
+      retry
       end
-
+    
       intended_spot = intended_spot.to_i - 1 # adjust to 0 index
-
-      if Game.current_board.include?(intended_spot) then
-        valid_spot = intended_spot
-        break
-      else
+    
+      if Game.current_board[intended_spot] != " " then
         Game.draw_board
         puts "<< That spot is taken! Try again! >>"
+      else
+        valid_spot = intended_spot
+        break
       end
     end
 
-    Game.valid_move(valid_spot, @side)
+    Game.valid_move(valid_spot, @side, @name)
   end
 end
+
 
 Game.new
