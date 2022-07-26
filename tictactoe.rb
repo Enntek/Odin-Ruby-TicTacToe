@@ -31,29 +31,56 @@ class Game
   def initialize
     #initialize run-once stuff
 
-
-    @game_board = (0..8).to_a
-    draw_board
+    @@game_board = (0..8).to_a
+    # @@game_board = ["X", 1, 2, 3, 4, 5, 6, 7, 8]
+    
 
     # initialize players
-
     player1 = Player.new("Player 1")
     player2 = Player.new("Player 2")
-    
+    game(player1, player2)
+  end
+
+  def self.current_board
+    @@game_board
   end
 
   def draw_board
+    puts "\n"
     for i in (0..8).step(3)
-      puts "#{@game_board[i]} | #{@game_board[i+1]} | #{@game_board[i+2]}"
-      puts "--+---+--" if i < 5
+      puts "\t#{@@game_board[i]} | #{@@game_board[i+1]} | #{@@game_board[i+2]}"
+      puts "\t--+---+--" if i < 5
+    end
+    puts "\n"
+  end
+
+  # main game loop
+  def game(player1, player2)
+
+    while true
+      draw_board
+      player1.take_turn(player1.name)
+      draw_board
+      player2.take_turn(player2.name)
     end
   end
 
-  # def game for main game loop
+  def self.valid_move(move, player_side)
+
+    # puts player_side
+    # p @@game_board
+    @@game_board[move] = player_side
+    p @@game_board
+
+    # puts "the move is #{move}"
+
+  end
+
 end
 
 class Player
   @@sides = ["X", "O"]
+  attr_reader :name, :side
 
   def initialize(name)
     @name = name
@@ -65,8 +92,9 @@ class Player
     if @@sides.length == 2
       begin
         puts "Choose X or O:"
-        @side = Kernel.gets.chomp.upcase.match(/(O|X)/)[0]
-      rescue StandardError=>e
+        @side = "X"
+        # @side = Kernel.gets.chomp.upcase.match(/(O|X)/)[0]
+      rescue NoMethodError=>e
         puts "Invalid input. Choose X or O:"
         retry
       end
@@ -76,11 +104,37 @@ class Player
     else
       @side = @@sides[0]
       puts "#{@name} is #{@side}"
-    end  
+    end
   end
+
+  def take_turn(name)
+    
+    while true
+      begin
+        puts "#{name}: it's your turn! Choose a spot 1 - 9: "
+        intended_spot = Kernel.gets.chomp.match(/[1-9]/)[0] #regex match later
+      rescue NoMethodError
+        puts "Invalid input. Choose a spot 1 - 9: "
+        retry
+      end
+
+      intended_spot = intended_spot.to_i - 1 # adjust to 0 index
+
+      if Game.current_board.include?(intended_spot) then
+        valid_spot = intended_spot
+        break
+      else
+        puts "<< Spot is taken! Try again! >>"
+      end
+    end
+
+    Game.valid_move(valid_spot, @side)
+  end
+
+
 end
 
-game = Game.new
+Game.new
 
 
 
@@ -199,7 +253,7 @@ game = Game.new
 # begin
 #   puts "Please select X or O: "
 #   player1.symbol = Kernel.gets.chomp.upcase.match(/(X|O)/)[0]
-# rescue StandardError=>e
+# rescue NoMethodError=>e
 #   puts "Invalid input... please type x or o."
 #   retry
 # end
