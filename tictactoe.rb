@@ -4,14 +4,9 @@
 # refactor all code, use principles of readability, modularity, brevity
 
 # add:
-# end game when 1 player wins
 # draw, when all spaces are filled
 # play new game
-# blank numbers on game board print
-# eliminate class variables and class methods for now, no reason to use them yet.
-
-# Change all class methods to instance methods
-# use spot_taken? to check move
+# break outer and inner loop at once
 
 # learned today: use instance variables and pass them back and forth freely
 
@@ -30,10 +25,6 @@ class Game
     game(player1, player2)
   end
 
-  # def current_board
-  #   @game_board
-  # end
-
   def draw_board
     puts "\n"
     (0..8).step(3).each do |i|
@@ -45,36 +36,45 @@ class Game
 
   # main loop
   def game(player1, player2)
+    players = [player1, player2]
+
     loop do
-      player1.take_turn(player1.name, @game_board)
-      valid_move(player1.name, player1.move, player1.side)
-      break if @game_over == true
+      players.each do |player|
+        begin
+          player.take_turn(player.name)
+          if spot_open?(player.move) == false
+            raise 'Error: Chosen spot is taken.'
+          end
+        rescue StandardError
+          puts 'This spot is not free.'
+        end
 
-      # puts "game over: #{@game_over}"
+        valid_move(player.move, player.side)
 
-      player2.take_turn(player2.name, @game_board)
-      valid_move(player2.name, player2.move, player2.side)
-      break if @game_over == true
+        win_check(player.side, player.name)
+
+        break if @game_over == true # may need to break twice
+      end
+      break if @game_over == true # may need to break twice
     end
   end
 
-  def spot_taken?
-    false
+  def spot_open?(move)
+    @game_board[move] == ' '
   end
 
-  def valid_move(name, move, side)
-    # puts "#{name}, #{move}"
+  def valid_move(move, side)
     @game_board[move] = side
     draw_board
-    # win_check(player_symb, player)
+    # win_check(side, player)
   end
 
-  def win_check(player_symb, player)
+  def win_check(side, name)
     win_configs = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7],
                    [2, 5, 8], [0, 4, 8], [2, 4, 6]]
 
     win = win_configs.any? do |win_subarr|
-      win_subarr.all? { |space| @@game_board[space] == player_symb }
+      win_subarr.all? { |space| @game_board[space] == side }
     end
 
     if !@game_board.include?(' ')
@@ -86,7 +86,7 @@ class Game
     if win
       @game_over = true
       puts "this sets gameover to true"
-      puts "\t << #{player} wins!!! >>" 
+      puts "\t << #{name} wins!!! >>" 
     end
   end
 end
@@ -120,7 +120,7 @@ class Player
     end
   end
 
-  def take_turn(name, gm_board)
+  def take_turn(name)
 
     begin
       puts "#{name}, it's your turn! Choose a spot from 1 to 9: "
@@ -133,17 +133,10 @@ class Player
     intended_spot = intended_spot.to_i - 1 # adjust to 0 index
     valid_spot = intended_spot
 
-    # valid_move(valid_spot, @side, @name)
     @move = valid_spot
   end
 end
 
 Game.new
 
-      # if gm_board[intended_spot] != ' '
-      #   draw_board
-      #   puts '<< That spot is taken! Try again! >>'
-      # else
-      #   valid_spot = intended_spot
-      #   break
-      # end
+
