@@ -1,16 +1,19 @@
 # Odin Ruby Project: Tic Tac Toe
 # https://www.theodinproject.com/lessons/ruby-tic-tac-toe
 
-#refactor all code, use principles of readability, modularity, brevity
+# refactor all code, use principles of readability, modularity, brevity
 
 # add:
 # end game when 1 player wins
 # draw, when all spaces are filled
 # play new game
 # blank numbers on game board print
+# eliminate class variables and class methods for now, no reason to use them yet.
 
 class Game
+  @@some_variable = true
   attr_reader :game_board
+  attr_accessor :game_over
 
   def initialize
     puts "Welcome to Tic Tac Toe!\n "
@@ -40,9 +43,12 @@ class Game
   def game(player1, player2)
     loop do
       player1.take_turn(player1.name)
-      # check game over
+      break if @game_over == true
+
+      puts "game over: #{@game_over}"
+
       player2.take_turn(player2.name)
-      # check game over
+      break if @game_over == true
     end
   end
 
@@ -60,32 +66,38 @@ class Game
       win_subarr.all? { |space| @@game_board[space] == player_symb }
     end
 
-    return puts "No spaces left. It's a draw!" unless @@game_board.include?(' ')
-    # run end game code, ask to play again
+    if !@@game_board.include?(' ')
+      @game_over = true
+      puts "this sets gameover to true"
+      puts "No spaces left. It's a draw!"
+    end
 
-    return puts "\t << #{player} wins!!! >>" if win
-    # run end game code, ask to play again
+    if win
+      @game_over = true
+      puts "this sets gameover to true"
+      puts "\t << #{player} wins!!! >>" 
+    end
   end
 end
 
 class Player
-  @@sides = ["X", "O"]
+  @@sides = ['X', 'O']
   attr_reader :name, :side
-  
+
   def initialize(name)
     @name = name
     @side = ""
     choose_side
   end
-  
+
   def choose_side
     if @@sides.length == 2
       begin
-        puts "Choose X or O:"
+        puts 'Choose X or O:'
         # @side = "X"
         @side = Kernel.gets.chomp.upcase.match(/(O|X)/)[0]
       rescue NoMethodError=>e
-        puts "Invalid input. Choose X or O:"
+        puts 'Invalid input. Choose X or O:'
         retry
       end
 
@@ -96,22 +108,22 @@ class Player
       puts "#{@name} is #{@side}"
     end
   end
-              
+
   def take_turn(name)
     while true
       begin
         puts "#{name}, it's your turn! Choose a spot from 1 to 9: "
         intended_spot = Kernel.gets.chomp.match(/[1-9]/)[0]
       rescue NoMethodError
-        puts "Invalid input. Choose a spot from 1 to 9: "
-      retry
+        puts 'Invalid input. Choose a spot from 1 to 9:'
+        retry
       end
-    
+
       intended_spot = intended_spot.to_i - 1 # adjust to 0 index
-    
-      if Game.current_board[intended_spot] != " " then
+
+      if Game.current_board[intended_spot] != ' '
         Game.draw_board
-        puts "<< That spot is taken! Try again! >>"
+        puts '<< That spot is taken! Try again! >>'
       else
         valid_spot = intended_spot
         break
@@ -121,6 +133,5 @@ class Player
     Game.valid_move(valid_spot, @side, @name)
   end
 end
-
 
 Game.new
