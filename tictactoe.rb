@@ -11,31 +11,33 @@
 # eliminate class variables and class methods for now, no reason to use them yet.
 
 # Change all class methods to instance methods
+# use spot_taken? to check move
+
+# learned today: use instance variables and pass them back and forth freely
 
 class Game
-  @@some_variable = true
   attr_reader :game_board
   attr_accessor :game_over
 
   def initialize
     puts "Welcome to Tic Tac Toe!\n "
-    # @@game_board = (0..8).to_a
     @game_board = Array.new(9, ' ')
     @game_over = false
-    player1 = Player.new('Player 1')
-    player2 = Player.new('Player 2')
+    @sides = ["X", "O"]
+    player1 = Player.new('Player 1', @sides)
+    player2 = Player.new('Player 2', @sides)
     draw_board
     game(player1, player2)
   end
 
-  def current_board
-    @game_board
-  end
+  # def current_board
+  #   @game_board
+  # end
 
   def draw_board
     puts "\n"
     (0..8).step(3).each do |i|
-      puts "\t#{@@game_board[i]} | #{@@game_board[i+1]} | #{@@game_board[i+2]}"
+      puts "\t#{@game_board[i]} | #{@game_board[i+1]} | #{@game_board[i+2]}"
       puts "\t--+---+--" if i < 5
     end
     puts "\n"
@@ -44,20 +46,27 @@ class Game
   # main loop
   def game(player1, player2)
     loop do
-      player1.take_turn(player1.name)
+      player1.take_turn(player1.name, @game_board)
+      valid_move(player1.name, player1.move, player1.side)
       break if @game_over == true
 
-      puts "game over: #{@game_over}"
+      # puts "game over: #{@game_over}"
 
-      player2.take_turn(player2.name)
+      player2.take_turn(player2.name, @game_board)
+      valid_move(player2.name, player2.move, player2.side)
       break if @game_over == true
     end
   end
 
-  def valid_move(move, player_symb, player)
-    @game_board[move] = player_symb
+  def spot_taken?
+    false
+  end
+
+  def valid_move(name, move, side)
+    # puts "#{name}, #{move}"
+    @game_board[move] = side
     draw_board
-    win_check(player_symb, player)
+    # win_check(player_symb, player)
   end
 
   def win_check(player_symb, player)
@@ -68,7 +77,7 @@ class Game
       win_subarr.all? { |space| @@game_board[space] == player_symb }
     end
 
-    if !@@game_board.include?(' ')
+    if !@game_board.include?(' ')
       @game_over = true
       puts "this sets gameover to true"
       puts "No spaces left. It's a draw!"
@@ -83,17 +92,17 @@ class Game
 end
 
 class Player
-  @sides = ['X', 'O']
-  attr_reader :name, :side
+  attr_reader :name, :side, :move
 
-  def initialize(name)
+  def initialize(name, sides)
     @name = name
-    @side = ""
-    choose_side
+    @side = ''
+    @move = 0
+    choose_side(sides)
   end
 
-  def choose_side
-    if @sides.length == 2
+  def choose_side(sides)
+    if sides.length == 2
       begin
         puts 'Choose X or O:'
         # @side = "X"
@@ -104,36 +113,37 @@ class Player
       end
 
       puts "#{@name} is #{@side}"
-      @sides.reject! { |item| item == @side }
+      sides.reject! { |item| item == @side }
     else
-      @side = @sides[0]
+      @side = sides[0]
       puts "#{@name} is #{@side}"
     end
   end
 
-  def take_turn(name)
-    while true
-      begin
-        puts "#{name}, it's your turn! Choose a spot from 1 to 9: "
-        intended_spot = Kernel.gets.chomp.match(/[1-9]/)[0]
-      rescue NoMethodError
-        puts 'Invalid input. Choose a spot from 1 to 9:'
-        retry
-      end
+  def take_turn(name, gm_board)
 
-      intended_spot = intended_spot.to_i - 1 # adjust to 0 index
-
-      if Game.current_board[intended_spot] != ' '
-        Game.draw_board
-        puts '<< That spot is taken! Try again! >>'
-      else
-        valid_spot = intended_spot
-        break
-      end
+    begin
+      puts "#{name}, it's your turn! Choose a spot from 1 to 9: "
+      intended_spot = Kernel.gets.chomp.match(/[1-9]/)[0]
+    rescue NoMethodError
+      puts 'Invalid input. Choose a spot from 1 to 9:'
+      retry
     end
 
-    valid_move(valid_spot, @side, @name)
+    intended_spot = intended_spot.to_i - 1 # adjust to 0 index
+    valid_spot = intended_spot
+
+    # valid_move(valid_spot, @side, @name)
+    @move = valid_spot
   end
 end
 
 Game.new
+
+      # if gm_board[intended_spot] != ' '
+      #   draw_board
+      #   puts '<< That spot is taken! Try again! >>'
+      # else
+      #   valid_spot = intended_spot
+      #   break
+      # end
