@@ -3,71 +3,71 @@
 
 #refactor all code, use principles of readability, modularity, brevity
 
-# draw actual board in console (different ways to do this. one is literally with multi-lines, or draw with iterators, try both?)
-
 # add:
 # end game when 1 player wins
 # draw, when all spaces are filled
 # play new game
 # blank numbers on game board print
 
-
 class Game
   attr_reader :game_board
-  
+
   def initialize
     puts "Welcome to Tic Tac Toe!\n "
     # @@game_board = (0..8).to_a
-    @@game_board = Array.new(9, " ")
-    player1 = Player.new("Player 1")
-    player2 = Player.new("Player 2")
+    @@game_board = Array.new(9, ' ')
+    @game_over = false
+    player1 = Player.new('Player 1')
+    player2 = Player.new('Player 2')
     Game.draw_board
     game(player1, player2)
   end
-  
+
   def self.current_board
     @@game_board
   end
-  
+
   def self.draw_board
     puts "\n"
-    for i in (0..8).step(3)
+    (0..8).step(3).each do |i|
       puts "\t#{@@game_board[i]} | #{@@game_board[i+1]} | #{@@game_board[i+2]}"
       puts "\t--+---+--" if i < 5
     end
     puts "\n"
   end
-  
-  def game(player1, player2) # main loop
-    while true
+
+  # main loop
+  def game(player1, player2)
+    loop do
       player1.take_turn(player1.name)
       # check game over
       player2.take_turn(player2.name)
       # check game over
     end
   end
-  
+
   def self.valid_move(move, player_symb, player)
     @@game_board[move] = player_symb
     Game.draw_board
     Game.win_check(player_symb, player)
   end
-  
+
   def self.win_check(player_symb, player)
-    win_configs = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], 
-    [2, 5, 8], [0, 4, 8], [2, 4, 6]]
-              
+    win_configs = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7],
+                   [2, 5, 8], [0, 4, 8], [2, 4, 6]]
+
     win = win_configs.any? do |win_subarr|
       win_subarr.all? { |space| @@game_board[space] == player_symb }
     end
-    
-    if !@@game_board.include?(" ") then puts "No spaces left. It's a draw!" end
-      # run end game code, ask to play again
-    if win then puts "\t << #{player} wins!!! >>" end
-      # run end game code, ask to play again
+
+    return puts "No spaces left. It's a draw!" unless @@game_board.include?(' ')
+    # run end game code, ask to play again
+
+    return puts "\t << #{player} wins!!! >>" if win
+    # run end game code, ask to play again
   end
 end
-            
+
 class Player
   @@sides = ["X", "O"]
   attr_reader :name, :side
@@ -88,7 +88,7 @@ class Player
         puts "Invalid input. Choose X or O:"
         retry
       end
-      
+
       puts "#{@name} is #{@side}"
       @@sides.reject! { |item| item == @side }
     else
