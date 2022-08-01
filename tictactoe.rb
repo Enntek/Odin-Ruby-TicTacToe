@@ -1,21 +1,26 @@
 # Odin Ruby Project: Tic Tac Toe
 # https://www.theodinproject.com/lessons/ruby-tic-tac-toe
 
-# refactor all code, use principles of readability, modularity, brevity
-
-# add:
-# draw, when all spaces are filled
-# play new game
-# break outer and inner loop at once
-
-# learned today: use instance variables and pass them back and forth freely
+require 'pry-byebug'
 
 class Game
   attr_reader :game_board
   attr_accessor :game_over
 
+  def greeting
+    puts "\n".bg_black
+    puts "\n"
+    puts "\t🠞  Welcome to Tic Tac Toe!! 🠜 ".bg_cyan
+    puts "\n"
+    puts "Tic Tac Toe is a 2 player game. Players take turns placing their mark
+    on a 3 by 3 grid.".blue
+    puts "\n"
+    puts "The player who succeeds in placing three of their marks in a horizontal, \n vertical, or diagonal row is the winner. ".red
+    puts "\n"
+  end
+
   def initialize
-    puts "Welcome to Tic Tac Toe!\n "
+    greeting
     @game_board = Array.new(9, ' ')
     @game_over = false
     @sides = ["X", "O"]
@@ -46,16 +51,30 @@ class Game
             raise 'Error: Chosen spot is taken.'
           end
         rescue StandardError
-          puts 'This spot is not free.'
+          puts 'That spot is not free. Try again!'.bg_red
         end
 
         valid_move(player.move, player.side)
 
         win_check(player.side, player.name)
 
-        break if @game_over == true # may need to break twice
+        break if @game_over == true 
       end
-      break if @game_over == true # may need to break twice
+      break if @game_over == true
+    end
+
+    play_again(player1, player2)
+  end
+
+  def play_again(p1, p2)
+    puts "Would you like to play again? ['y'/'n']"
+    input = gets.chomp
+
+    if input == 'y'
+      @game_over = false
+      @game_board = Array.new(9, ' ')
+      draw_board
+      game(p1, p2)
     end
   end
 
@@ -66,7 +85,6 @@ class Game
   def valid_move(move, side)
     @game_board[move] = side
     draw_board
-    # win_check(side, player)
   end
 
   def win_check(side, name)
@@ -79,14 +97,17 @@ class Game
 
     if !@game_board.include?(' ')
       @game_over = true
-      puts "this sets gameover to true"
-      puts "No spaces left. It's a draw!"
+      puts "\n"
+      puts "No spaces left. It's a draw!".bg_red
+      puts "\n"
     end
 
     if win
       @game_over = true
-      puts "this sets gameover to true"
-      puts "\t << #{name} wins!!! >>" 
+      # puts "this sets gameover to true"
+      puts "\n"
+      puts "<< #{name} wins!!! >>".bg_magenta
+      puts "\n"
     end
   end
 end
@@ -97,46 +118,67 @@ class Player
   def initialize(name, sides)
     @name = name
     @side = ''
-    @move = 0
     choose_side(sides)
   end
 
   def choose_side(sides)
     if sides.length == 2
       begin
-        puts 'Choose X or O:'
+        puts "To begin choose X or O: ['x'/'o']".bg_green
         # @side = "X"
         @side = Kernel.gets.chomp.upcase.match(/(O|X)/)[0]
       rescue NoMethodError=>e
-        puts 'Invalid input. Choose X or O:'
+        puts 'Invalid input. Try again!'.bg_red
         retry
       end
 
-      puts "#{@name} is #{@side}"
+      puts "#{@name} is #{@side}!".red
       sides.reject! { |item| item == @side }
     else
       @side = sides[0]
-      puts "#{@name} is #{@side}"
+      puts "#{@name} is #{@side}".red
     end
   end
 
   def take_turn(name)
+    intended_spot = 0
 
-    begin
-      puts "#{name}, it's your turn! Choose a spot from 1 to 9: "
-      intended_spot = Kernel.gets.chomp.match(/[1-9]/)[0]
-    rescue NoMethodError
-      puts 'Invalid input. Choose a spot from 1 to 9:'
-      retry
+    loop do
+      puts "#{name}, it's your turn! Choose a spot from 1 to 9: ".green
+      intended_spot = gets.chomp
+      break if intended_spot.match(/[1-9]/)
+      puts 'Invalid input. Try again!'.bg_red
     end
 
-    intended_spot = intended_spot.to_i - 1 # adjust to 0 index
-    valid_spot = intended_spot
-
-    @move = valid_spot
+    @move = intended_spot.to_i - 1 # adjust to 0 index
   end
 end
 
+class String
+  def black;          "\e[30m#{self}\e[0m" end
+  def red;            "\e[31m#{self}\e[0m" end
+  def green;          "\e[32m#{self}\e[0m" end
+  def brown;          "\e[33m#{self}\e[0m" end
+  def blue;           "\e[34m#{self}\e[0m" end
+  def magenta;        "\e[35m#{self}\e[0m" end
+  def cyan;           "\e[36m#{self}\e[0m" end
+  def gray;           "\e[37m#{self}\e[0m" end
+  def default;        "\e[39m#{self}\e[0m" end
+
+  def bg_black;       "\e[40m#{self}\e[0m" end
+  def bg_red;         "\e[41m#{self}\e[0m" end
+  def bg_green;       "\e[42m#{self}\e[0m" end
+  def bg_brown;       "\e[43m#{self}\e[0m" end
+  def bg_blue;        "\e[44m#{self}\e[0m" end
+  def bg_magenta;     "\e[45m#{self}\e[0m" end
+  def bg_cyan;        "\e[46m#{self}\e[0m" end
+  def bg_gray;        "\e[47m#{self}\e[0m" end
+
+  def bold;           "\e[1m#{self}\e[22m" end
+  def italic;         "\e[3m#{self}\e[23m" end
+  def underline;      "\e[4m#{self}\e[24m" end
+  def blink;          "\e[5m#{self}\e[25m" end
+  def reverse_color;  "\e[7m#{self}\e[27m" end
+end
+
 Game.new
-
-
