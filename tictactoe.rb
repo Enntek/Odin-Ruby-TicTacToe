@@ -7,6 +7,17 @@ class Game
   attr_reader :game_board
   attr_accessor :game_over
 
+  def initialize
+    greeting
+    @game_board = Array.new(9, ' ')
+    @game_over = false
+    @sides = ["X", "O"]
+    player1 = Player.new('Player 1', @sides)
+    player2 = Player.new('Player 2', @sides)
+    draw_board
+    game(player1, player2)
+  end
+
   def greeting
     puts "\n".bg_black
     puts "\n"
@@ -17,17 +28,6 @@ class Game
     puts "\n"
     puts "The player who succeeds in placing three of their marks in a horizontal, \n vertical, or diagonal row is the winner. ".red
     puts "\n"
-  end
-
-  def initialize
-    greeting
-    @game_board = Array.new(9, ' ')
-    @game_over = false
-    @sides = ["X", "O"]
-    player1 = Player.new('Player 1', @sides)
-    player2 = Player.new('Player 2', @sides)
-    draw_board
-    game(player1, player2)
   end
 
   def draw_board
@@ -75,6 +75,8 @@ class Game
       @game_board = Array.new(9, ' ')
       draw_board
       game(p1, p2)
+    else
+      puts 'Alright, see you soon!'
     end
   end
 
