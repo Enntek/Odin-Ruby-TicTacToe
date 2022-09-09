@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require './lib/player'
 require 'pry-byebug'
 
 class TicTacToe
@@ -7,14 +8,7 @@ class TicTacToe
   attr_accessor :game_over
 
   def initialize
-    greeting
     create_board
-    @game_over = false
-    @sides = ["X", "O"]
-    @player1 = Player.new('Player 1', @sides)
-    @player2 = Player.new('Player 2', @sides)
-    draw_board
-    # game(player1, player2)
   end
 
   def create_board
@@ -42,8 +36,18 @@ class TicTacToe
     puts "\n"
   end
 
-  # main loop
   def play_game
+    greeting
+    @sides = ["X", "O"]
+    @player1 = Player.new('Player 1', @sides)
+    @player2 = Player.new('Player 2', @sides)
+    @game_over = false
+    draw_board
+    game_loop
+  end
+
+  # main loop
+  def game_loop
     players = [@player1, @player2]
 
     loop do
@@ -65,10 +69,10 @@ class TicTacToe
       break if @game_over == true
     end
 
-    play_again(@player1, @player2)
+    play_again
   end
 
-  def play_again(p1, p2)
+  def play_again
     puts "Would you like to play again? ['y'/'n']"
     input = gets.chomp
 
@@ -76,7 +80,7 @@ class TicTacToe
       @game_over = false
       @game_board = Array.new(9, ' ')
       draw_board
-      game(p1, p2)
+      game_loop
     else
       puts 'Alright, see you soon!'
     end
