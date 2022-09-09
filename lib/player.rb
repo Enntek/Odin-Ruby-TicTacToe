@@ -14,7 +14,4 @@ class Player
   def establish_side(choice)
     @side = choice
   end
-
-
-
 end

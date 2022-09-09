@@ -8,6 +8,4 @@ require_relative 'player'
 require_relative 'display'
 
 tictactoe = TicTacToe.new
-# tictactoe.draw_board
 tictactoe.play_game
-# tictactoe.cell_available?(0)

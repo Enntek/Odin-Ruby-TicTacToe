@@ -2,6 +2,7 @@
 
 require 'forwardable'
 
+# Each GameBoard contains 9 Cells
 class GameBoard
   extend Forwardable
   include Enumerable
@@ -25,6 +26,3 @@ class GameBoard
     end
   end
 end
-
-# gameboard = GameBoard.new
-# puts gameboard.cells[1]

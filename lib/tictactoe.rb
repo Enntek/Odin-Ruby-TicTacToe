@@ -4,10 +4,8 @@ require_relative 'player'
 require_relative 'gameboard'
 require_relative 'display'
 
-
 class TicTacToe
   include Display
-
   attr_reader :game_board, :player1, :player2
   attr_accessor :game_over, :current_turn
 
@@ -15,7 +13,6 @@ class TicTacToe
     @game_board = GameBoard.new
     @player1 = Player.new('Player 1')
     @player2 = Player.new('Player 2')
-
   end
 
   def draw_board
@@ -87,8 +84,6 @@ class TicTacToe
       turn_msg
       intended_spot = gets.chomp
       return intended_spot if intended_spot.match(/^\d{1}$/)
-      
-      # match(/^[a-zA-Z]{2}+$/) # nil; very strict with carat + $, limit to {2} characters
 
       invalid_turn_input_msg
     end
@@ -99,7 +94,7 @@ class TicTacToe
   end
 
   def check_game
-    check_win(current_turn.side, current_turn.player_name)
+    check_win(current_turn.side)
     check_draw
   end
 
@@ -138,7 +133,7 @@ class TicTacToe
     end
   end
 
-  def check_win(side, name)
+  def check_win(side)
     win_configs = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7],
                    [2, 5, 8], [0, 4, 8], [2, 4, 6]]
 

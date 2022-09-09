@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+
+# All puts messages go here
 module Display
   def greeting
     puts "hello world!"
