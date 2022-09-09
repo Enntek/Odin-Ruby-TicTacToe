@@ -3,10 +3,8 @@
 # Odin Ruby Project: Tic Tac Toe
 # https://www.theodinproject.com/lessons/ruby-tic-tac-toe
 
-require './lib/tictactoe'
-require './lib/player'
-# require_relative 'tictactoe'
-# require_relative 'player'
+require_relative 'tictactoe'
+require_relative 'player'
 
 tictactoe = TicTacToe.new
 tictactoe.play_game

@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require_relative 'tictactoe'
+
+# There are 2 players in Tic Tac Toe
 class Player
   attr_reader :name, :side, :move
 

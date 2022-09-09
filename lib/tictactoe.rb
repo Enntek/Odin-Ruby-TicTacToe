@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
-require './lib/player'
-require 'pry-byebug'
+require_relative 'player'
+require_relative 'gameboard'
+
 
 class TicTacToe
+
   attr_reader :game_board, :player1, :player2
   attr_accessor :game_over
 
