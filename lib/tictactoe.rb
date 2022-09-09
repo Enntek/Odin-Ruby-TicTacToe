@@ -2,6 +2,7 @@
 
 require_relative 'player'
 require_relative 'gameboard'
+require_relative 'display'
 
 
 class TicTacToe
@@ -10,29 +11,21 @@ class TicTacToe
   attr_accessor :game_over
 
   def initialize
-    create_board
+    @game_board = GameBoard.new
+    @player1 = Player.new('player1')
+    @player2 = Player.new('player2')
   end
 
-  def create_board
-    @game_board = Array.new(9, ' ')
-  end
-
-  def greeting
-    puts "\n".bg_black
-    puts "\n"
-    puts "\t🠞  Welcome to Tic Tac Toe!! 🠜 ".bg_cyan
-    puts "\n"
-    puts "Tic Tac Toe is a 2 player game. Players take turns placing their mark
-    on a 3 by 3 grid.".blue
-    puts "\n"
-    puts "The player who succeeds in placing three of their marks in a horizontal, \n vertical, or diagonal row is the winner. ".red
-    puts "\n"
-  end
+  # def create_board
+  #   # @game_board = Array.new(9, ' ')
+  # end
 
   def draw_board
     puts "\n"
     (0..8).step(3).each do |i|
-      puts "\t#{@game_board[i]} | #{@game_board[i+1]} | #{@game_board[i+2]}"
+      # puts "\t#{@game_board[i]} | #{@game_board[i+1]} | #{@game_board[i+2]}"
+      # gameboard.cells[1]
+      puts "\t#{@game_board.cells[i]} | #{@game_board.cells[i+1]} | #{@game_board.cells[i+2]}"
       puts "\t--+---+--" if i < 5
     end
     puts "\n"

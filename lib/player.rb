@@ -6,10 +6,10 @@ require_relative 'tictactoe'
 class Player
   attr_reader :name, :side, :move
 
-  def initialize(name, sides)
+  def initialize(name, side = '')
     @name = name
-    @side = ''
-    choose_side(sides)
+    @side = side
+    # choose_side(sides)
   end
 
   def choose_side(sides)
