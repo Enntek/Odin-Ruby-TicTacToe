@@ -3,9 +3,9 @@
 require 'forwardable'
 
 class GameBoard
-  # extend Forwardable
-  # include Enumerable
-  # def_delegators :@cells, :size, :each
+  extend Forwardable
+  include Enumerable
+  def_delegators :@cells, :size, :each
 
   attr_reader :cells
 
