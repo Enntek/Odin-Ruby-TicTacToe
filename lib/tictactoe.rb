@@ -56,14 +56,15 @@ class TicTacToe
 
   def take_turns
     draw_board
-    valid_cell = pick_valid_cell
-    take_available_cell(valid_cell)
+    valid_number = pick_valid_cell
+    take_available_cell(valid_number)
     check_game
     switch_players
   end
 
-  def take_available_cell(number)
-    @game_board.cells[number].state = current_turn.side
+  def take_available_cell(valid_number)
+    player_side = current_turn.side
+    @game_board.change_cell_state(valid_number, player_side)
   end
 
   def cell_available?(number)

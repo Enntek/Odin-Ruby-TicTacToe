@@ -1,7 +1,8 @@
-#spec/main_spec.rb
+ #spec/main_spec.rb
 require './lib/tictactoe'
 
-# Let's just test a few select methods and move onto Connect 4
+# This is to practice stubbing, mocking, etc. in RSpec
+# For practice I am writing excessive tests that are coupled to the implementation
 
 describe TicTacToe do
   let(:game) { described_class.new }
@@ -43,8 +44,8 @@ describe TicTacToe do
         bad_input = '3'
         good_input = 'X'
 
-        #stub method chain
-        game.stub_chain(:gets, :chomp, :upcase).and_return(bad_input, good_input)
+        # stub method chain
+        allow(game).to receive_message_chain(:gets, :chomp, :upcase).and_return(bad_input, good_input)
       end
 
       it 'completes loop and displays error message once' do
@@ -70,11 +71,83 @@ describe TicTacToe do
 
   describe '#verify_input' do
     it 'returns input if input is valid' do
-
+      valid_letter = 'X'
+      verify_input = game.verify_input(valid_letter)
+      expect(verify_input).to eq(valid_letter)
     end
 
     it 'returns nil if input is invalid' do
+      incorrect_input = '3'
+      verify_input = game.verify_input(incorrect_input)
+      expect(verify_input).to be_nil
+    end
+  end
 
+  describe 'described_class instantiation' do
+    it 'calls new twice on Player class' do
+      expect(Player).to receive(:new).exactly(2).times
+      described_class.new
+    end
+  end
+
+  # You must connect :game to the two instances created in the init.
+  # These two instances will receive :establish_side
+
+  describe '#establish_sides' do
+    # let(:p1) { instance_double(Player) }
+    let(:game) { described_class.new }
+
+    before do
+      allow(game).to receive(:choose_side)
+    end
+
+    it 'sends #establish_side to player1' do
+      expect(game.player1).to receive(:establish_side)
+      game.establish_sides
+    end
+
+    it 'sends #establish_side to player2' do
+      expect(game.player2).to receive(:establish_side)
+      game.establish_sides
+    end
+  end
+
+  describe '#take_turns' do
+    # This is a public script method, it does not need to be tested,
+    # however, the method it calls may need testing
+  end
+
+  describe '#take_available_cell' do
+    before do
+      allow(game.current_turn).to receive(:side)
+    end
+
+    it 'sets specific gameboard cell to X or O' do
+      valid_number = 3
+      expect(game.game_board).to receive(:change_cell_state)
+      game.take_available_cell(valid_number)
+    end
+  end
+
+  describe '#pick_valid_cell' do
+
+    context 'when user gives 1 invalid input, then a valid input' do
+      it 'completes loop and receives 1 error' do
+  
+        game.pick_valid_cell
+      end
+    end
+
+    context 'when user gives 2 invalid inputs, then a valid input' do
+      it 'completes loop and receives 2 errors' do
+  
+      end
+    end
+
+    context 'when user gives a valid input' do
+      it 'returns valid_number' do
+  
+      end
     end
   end
 end

@@ -25,4 +25,8 @@ class GameBoard
       Cell.new(index, ' ')
     end
   end
+
+  def change_cell_state(valid_number, player_side)
+    cells[valid_number].state = player_side
+  end
 end
