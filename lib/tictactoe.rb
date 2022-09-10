@@ -67,10 +67,6 @@ class TicTacToe
     @game_board.change_cell_state(valid_number, player_side)
   end
 
-  def cell_available?(number)
-    true if @game_board.cells[number].state == ' '
-  end
-
   def pick_valid_cell
     loop do
       valid_number = input_number.to_i - 1 # 0 index
@@ -78,6 +74,10 @@ class TicTacToe
 
       invalid_turn_input_msg
     end
+  end
+
+  def cell_available?(number)
+    true if number.between?(0, 8) && @game_board.cells[number].state == ' '
   end
 
   def input_number

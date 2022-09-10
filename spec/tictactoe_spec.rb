@@ -130,24 +130,81 @@ describe TicTacToe do
   end
 
   describe '#pick_valid_cell' do
+    context 'when user gives a valid input' do
+      valid_number = '3'
 
-    context 'when user gives 1 invalid input, then a valid input' do
+      before do
+        allow(game).to receive(:input_number).and_return(valid_number)
+      end
+
+      it 'completes loop and returns valid_number' do
+        expect(game.pick_valid_cell).to eq(valid_number.to_i - 1)
+      end
+    end
+
+    context 'when user gives invalid input of "0" (zero), then a valid input' do
+      invalid_number = '0'
+      valid_number = '3'
+
+      before do
+        allow(game).to receive(:input_number).and_return(invalid_number, valid_number)
+      end
+
       it 'completes loop and receives 1 error' do
-  
+        expect(game).to receive(:invalid_turn_input_msg).exactly(1).time
         game.pick_valid_cell
       end
     end
 
     context 'when user gives 2 invalid inputs, then a valid input' do
+      invalid_first = '10'
+      invalid_second = '-99'
+      valid_number = '3'
+
+      before do
+        allow(game).to receive(:input_number).and_return(invalid_first, invalid_second, valid_number)
+      end
+
       it 'completes loop and receives 2 errors' do
-  
+        expect(game).to receive(:invalid_turn_input_msg).exactly(2).times
+        game.pick_valid_cell
       end
     end
 
-    context 'when user gives a valid input' do
-      it 'returns valid_number' do
-  
+    context 'when user inputs 1' do
+      valid_input = '1'
+      valid_number = 0
+
+      before do
+        allow(game).to receive(:input_number).and_return(valid_input)
+      end
+
+      it 'completes loop and returns valid_number eq to 8' do
+        expect(game.pick_valid_cell).to eq(valid_number)
+        game.pick_valid_cell
       end
     end
+
+    context 'when user inputs 9' do
+      valid_input = '9'
+      valid_number = 8
+
+      before do
+        allow(game).to receive(:input_number).and_return(valid_input)
+      end
+
+      it 'completes loop and returns valid_number eq to 9' do
+        expect(game.pick_valid_cell).to eq(valid_number)
+        game.pick_valid_cell
+      end
+    end
+  end
+
+  describe '#check_draw' do
+
+  end
+
+  describe '#check_win' do
+
   end
 end
