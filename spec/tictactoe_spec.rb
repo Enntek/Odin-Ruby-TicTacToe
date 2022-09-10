@@ -26,9 +26,9 @@ describe TicTacToe do
     context 'when user inputs correct letter' do
       before do
         good_input = 'O'
-        expect(game).to receive(:choose_side_msg)
-        expect(game).to receive(:gets).and_return(good_input)
-        expect(game).to receive(:verify_input).with(good_input).and_return(good_input)
+        allow(game).to receive(:choose_side_msg)
+        allow(game).to receive(:gets).and_return(good_input)
+        allow(game).to receive(:verify_input).with(good_input).and_return(good_input)
       end
 
       it 'completes loop without any errors' do
@@ -39,13 +39,12 @@ describe TicTacToe do
 
     context 'when user inputs an incorrect value once, then a valid input' do
       before do
-        expect(game).to receive(:choose_side_msg)
+        allow(game).to receive(:choose_side_msg)
         bad_input = '3'
         good_input = 'X'
 
-        expect(game).to receive(:gets).and_return(bad_input, good_input)
-        # How do we stub more than 1 method?
-        # expect(game).to receive_messages(:gets, :chomp, :upcase)
+        #stub method chain
+        game.stub_chain(:gets, :chomp, :upcase).and_return(bad_input, good_input)
       end
 
       it 'completes loop and displays error message once' do
@@ -56,16 +55,26 @@ describe TicTacToe do
 
     context 'when user inputs incorrect values twice, then a valid input' do
       before do
-        expect(game).to receive(:choose_side_msg)
+        allow(game).to receive(:choose_side_msg)
         bad_input = '3'
         good_input = 'X'
-        expect(game).to receive(:gets).and_return(bad_input, bad_input, good_input)
+        allow(game).to receive(:gets).and_return(bad_input, bad_input, good_input)
       end
 
       it 'completes loop and displays error message twice' do
         expect(game).to receive(:choose_side_error_msg).exactly(2).times
         game.choose_side
       end
+    end
+  end
+
+  describe '#verify_input' do
+    it 'returns input if input is valid' do
+
+    end
+
+    it 'returns nil if input is invalid' do
+
     end
   end
 end
